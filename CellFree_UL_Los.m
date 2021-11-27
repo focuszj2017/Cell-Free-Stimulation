@@ -145,7 +145,7 @@ R_cf = zeros(1,K);
 power_tag = zeros(1,K);
 a_ch = zeros(1,K);
 half_wavelengh = 1 / 2;
-segma = 10e-14; %power of noise: 10^-11 mW
+segma = 1e-14; %power of noise: 10^-11 mW
 c = 3 * 10e8;%speed of light
 lambda = c / (f * 10e6);%wavelength
 l = lambda * half_wavelengh;%Distance between antennas scale in m
@@ -171,7 +171,7 @@ for ii = 1:K
                 q = (1 - exp(2i * pi * l1 * Na * (cos(theta(v,k)) - cos(theta(v,ii))))) / (1 - exp(2i * pi * l1 * (cos(theta(v,k)) - cos(theta(v,ii)))));
             end
             
-            deno = deno + ( BETAA(v,k) * BETAA(v,ii) )^(1/2) * exp(2i * pi * (dist(:,k) - dist(:,ii)) / lambda) * q;
+            deno = deno + ( BETAA(v,k) * BETAA(v,ii) )^(1/2) * exp(2i * pi * (dist(v,k) - dist(v,ii)) / lambda) * q;
         end
         PC(ii,k) = deno;
         %PC(ii,k) = sum(  (BETAA(:,k) .*BETAA(:,ii)).^(1/2) .* exp(2i * pi * (dist(:,k) - dist(:,ii)) / lambda)  );
