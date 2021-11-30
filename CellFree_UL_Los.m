@@ -184,7 +184,7 @@ for k = 1:K
     for ii = 1:K
         deno = deno + power_tag(ii) * a_ch(ii)^2 * PC1(ii,k) / (Na * sum(BETAA(:,k)));
     end
-    SINR(k) = power_tag(k) * (a_ch(k))^2 * Na * sum(BETAA(:,k)) / (deno - power_tag(k) * a_ch(k) * Na * sum(BETAA(:,k)) + segma);
+    SINR(k) = power_tag(k) * (a_ch(k))^2 * Na * sum(BETAA(:,k)) / (deno - power_tag(k) * a_ch(k)^2 * Na * sum(BETAA(:,k)) + segma);
     %Rate
     R_cf(k) = log2(1 + SINR(k));
 end
