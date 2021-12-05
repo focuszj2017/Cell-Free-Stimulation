@@ -30,9 +30,10 @@ d1=0.05;%km
 N=200;%number of loops
 
 R_cf_min=zeros(1,N);%min rate, cell-free
+R_cf_sum=zeros(1,N);%capacity
 
 R_cl_min=zeros(1,N);%collocated massive MIMO
-
+R_cl_sum=zeros(1,N);
 
 %%%%%% APs in Cell Free%%%%%
 %%% Randomly locations of M APs%%%
@@ -199,8 +200,8 @@ power_tag = zeros(1,K);
 a_ch = zeros(1,K);
 half_wavelengh = 1 / 2;
 segma = 1e-14; %power of noise: 10^-11 mW
-c = 3 * 10e8;%speed of light
-lambda = c / (f * 10e6);%wavelength
+c = 3 * 1e8;%speed of light
+lambda = c / (f * 1e6);%wavelength
 l = lambda * half_wavelengh;%Distance between antennas scale in m
 l1 = l / lambda;
 
@@ -213,8 +214,8 @@ end
 PC = zeros(K,K);
 
 %compute Partial sum
-for ii = 1:K
-    for k = 1:K  
+for k = 1:K
+    for ii = 1:K  
         deno = 0;
         for v = 1:M
             q = 0;
@@ -242,7 +243,7 @@ for k = 1:K
 end
 
 R_cf_min(n) = min(R_cf(1,:));
-
+R_cf_sum(n) = sum(R_cf(1,:));
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%                 COLLOCATED MASSIVE MIMO             %%%%%%%%%%%%%%%%
@@ -295,8 +296,8 @@ R_cl = zeros(1,K);
 PC = zeros(K,K);
 
 %compute Partial sum
-for ii = 1:K
-    for k = 1:K  
+for k = 1:K
+    for ii = 1:K  
         deno = 0;
         for v = 1:M_cl
             q = 0;
@@ -324,12 +325,18 @@ for k = 1:K
 end
 
 R_cl_min(n) = min(R_cl(1,:));
+R_cf_sum(n) = min(R_cf(1,:));
 
 end
 
 Y=linspace(0,1,N);
 
+figure(1)
 hold on 
 plot(sort(R_cf_min),Y(:),'r');
 plot(sort(R_cl_min),Y(:),'b');
-%plot(sort(R_sc_opt_min),Y(:),'b')
+
+figure(2)
+hold on
+plot(sort(R_cf_sum),Y(:),'r');
+plot(sort(R_cl_sum),Y(:),'b');
