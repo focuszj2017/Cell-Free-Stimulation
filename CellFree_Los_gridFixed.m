@@ -325,7 +325,7 @@ for k = 1:K
 end
 
 R_cl_min(n) = min(R_cl(1,:));
-R_cf_sum(n) = min(R_cf(1,:));
+R_cl_sum(n) = sum(R_cl(1,:));
 
 end
 
