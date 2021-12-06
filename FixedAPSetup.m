@@ -9,6 +9,8 @@ locationsGridHorizontal = repmat(interAPDistance/2:interAPDistance:D-interAPDist
 locationsGridVertical = locationsGridHorizontal';
 APpositions = locationsGridHorizontal(:) + 1i*locationsGridVertical(:);
 APpositions = APpositions - D/2 - 1i*D/2;
-% scatter(real(APpositions),imag(APpositions),'rs'),hold on;
+
+figure(3)
+scatter(real(APpositions),imag(APpositions),'rs'),hold on;
 
 end

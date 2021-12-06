@@ -152,8 +152,8 @@ power_tag = zeros(1,K);
 a_ch = zeros(1,K);
 half_wavelengh = 1 / 2;
 segma = 1e-14; %power of noise: 10^-11 mW
-c = 3 * 10e8;%speed of light
-lambda = c / (f * 10e6);%wavelength
+c = 3 * 1e8;%speed of light
+lambda = c / (f * 1e6);%wavelength
 l = lambda * half_wavelengh;%Distance between antennas scale in m
 l1 = l / lambda;
 
@@ -268,14 +268,14 @@ SINR = zeros(1,K);
 R_cl = zeros(1,K);
 
 %some parameters
-power_tag = zeros(1,K);
-a_ch = zeros(1,K);
-half_wavelengh = 1 / 2;
-segma = 1e-14; %power of noise: 10^-11 mW
-c = 3 * 10e8;%speed of light
-lambda = c / (f * 10e6);%wavelength
-l = lambda * half_wavelengh;%Distance between antennas scale in m
-l1 = l / lambda;
+%power_tag = zeros(1,K);
+%a_ch = zeros(1,K);
+%half_wavelengh = 1 / 2;
+%segma = 1e-14; %power of noise: 10^-11 mW
+%c = 3 * 1e8;%speed of light
+%lambda = c / (f * 1e6);%wavelength
+%l = lambda * half_wavelengh;%Distance between antennas scale in m
+%l1 = l / lambda;
 
 %initalize
 for k=1:K

@@ -15,7 +15,7 @@ M_cl = 1;%number of APs in collocated massive MIMO
 Na_cl = 400;%number of antennas per AP in collocated
 
 
-D=1; %in kilometer
+D=2; %in kilometer
 
 %B=20; %Mhz
 Hb = 15; % Base station height in m
