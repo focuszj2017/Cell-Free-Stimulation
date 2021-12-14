@@ -15,7 +15,7 @@ M_cl = 1;%number of APs in collocated massive MIMO
 Na_cl = 400;%number of antennas per AP in collocated
 
 
-D=2; %in kilometer
+D=1; %in kilometer
 
 %B=20; %Mhz
 Hb = 15; % Base station height in m
@@ -29,11 +29,32 @@ d1=0.05;%km
 
 N=200;%number of loops
 
-R_cf_min=zeros(1,N);%min rate, cell-free
-R_cf_sum=zeros(1,N);%capacity
+%Some adjustable parameters
+power_tag = zeros(1,K);% power of signals emmit by tag k
+a_ch = zeros(1,K);% channel gain forward
+half_wavelengh = 1 / 2;
+segma = 1e-14; %power of noise: 10^-11 mW
+c = 3 * 1e8;%speed of light
+lambda = c / (f * 1e6);%wavelength
+l = lambda * half_wavelengh;%Distance between antennas scale in m
+l1 = l / lambda;
 
-R_cl_min=zeros(1,N);%collocated massive MIMO
-R_cl_sum=zeros(1,N);
+%initalize
+for k=1:K
+    power_tag(k) = 1;
+    a_ch(k) = 0.01;
+end
+
+R_cf_MR_min=zeros(1,N);%min rate, cell-free
+R_cf_MR_sum=zeros(1,N);%capacity
+R_cf_MMSE_min=zeros(1,N);
+R_cf_MMSE_sum=zeros(1,N);
+
+
+R_cl_MR_min=zeros(1,N);%collocated massive MIMO
+R_cl_MR_sum=zeros(1,N);%capacity
+R_cl_MMSE_min=zeros(1,N);
+R_cl_MMSE_sum=zeros(1,N);
 
 %%%%%% APs in Cell Free%%%%%
 %%% Randomly locations of M APs%%%
@@ -81,7 +102,7 @@ D8=D8- D*ones(M,2);
 AP(:,:,9)=AP(:,:,1)+D8;
 
 
-%%%%%% APs in Collocative Massive MIMO%%%%%
+%%%%%% APs in Collocated Massive MIMO%%%%%
 AP_cl=zeros(M_cl,2,9);
 AP_cl(1,:,1) = [0 0];
 
@@ -167,6 +188,8 @@ Ter(:,:,9)=Ter(:,:,1)+D8;
 %%%%%%                       CELL FREE                     %%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%     MRC BEGIN     %%%%%%%%%%%%%%%%%%%%%%%%%
+
 %%calculation of Beta
 %Create an MxK large-scale coefficients beta_mk
 BETAA = zeros(M, K);
@@ -195,21 +218,6 @@ end
 SINR = zeros(1,K);
 R_cf = zeros(1,K);
 
-%some parameters
-power_tag = zeros(1,K);
-a_ch = zeros(1,K);
-half_wavelengh = 1 / 2;
-segma = 1e-14; %power of noise: 10^-11 mW
-c = 3 * 1e8;%speed of light
-lambda = c / (f * 1e6);%wavelength
-l = lambda * half_wavelengh;%Distance between antennas scale in m
-l1 = l / lambda;
-
-%initalize
-for k=1:K
-    power_tag(k) = 1;
-    a_ch(k) = 0.01;
-end
 %%Inter-symbol interference
 PC = zeros(K,K);
 
@@ -242,12 +250,58 @@ for k = 1:K
     R_cf(k) = log2(1 + SINR(k));
 end
 
-R_cf_min(n) = min(R_cf(1,:));
-R_cf_sum(n) = sum(R_cf(1,:));
+R_cf_MR_min(n) = min(R_cf(1,:));
+R_cf_MR_sum(n) = sum(R_cf(1,:));
+%%%%%%%%%%%%%%%%%%%%%%%%%     MRC END     %%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%     MMSE BEGIN     %%%%%%%%%%%%%%%%%%%%%%%%%
+%compute channel gain
+gain = zeros(M*Na, K);
+gMK = zeros(M,K,Na);
+for idx = 1:Na
+    gMK(:,:,idx) = BETAA.^(1/2).*exp(-2i*pi*( dist + (idx-1)*l*cos(theta) ) / lambda);
+end
+
+for k = 1:K
+    tmp = [];
+    for m = 1:M
+        gNa = reshape(gMK(m,k,:), [Na,1]);
+        tmp = [tmp;gNa];
+    end
+    gain(:,k) = tmp;
+end
+
+%some parameters
+p = power_tag(1) * a_ch(1)^2 * ones(K,1);
+diagP = diag(p);
+eyeMNa = segma * eye(M*Na);
+%compute MMSE combining
+V_MMSE = ((gain*diagP*gain')+eyeMNa)\(gain*diagP); %Matrix MNa * K
+%compute SINR
+SINR = zeros(1,K);
+R_cf = zeros(1,K);
+for k = 1:K
+    v = V_MMSE(:,k);
+    deno = 0;
+    for ii = 1:K
+        deno = deno + power_tag(ii) * a_ch(ii)^2 * abs(v' * gain(:,ii))^2;
+    end
+    partialSum = power_tag(k) * a_ch(k)^2 * abs(v' * gain(:,k))^2;
+    SINR(k) = partialSum / (deno - partialSum + segma * norm(v)^2);
+    R_cf(k) = log2(1 + SINR(k));
+end
+R_cf_MMSE_min(n) = min(R_cf(1,:));
+R_cf_MMSE_sum(n) = sum(R_cf(1,:));
+%%%%%%%%%%%%%%%%%%%%%%%%%     MMSE END     %%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%                 COLLOCATED MASSIVE MIMO             %%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%     MRC BEGIN     %%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%calculation of Beta
 %Create an MxK large-scale coefficients beta_mk
@@ -275,22 +329,6 @@ end
 %%%calculation of SINR
 SINR = zeros(1,K);
 R_cl = zeros(1,K);
-
-%some parameters
-% power_tag = zeros(1,K);
-% a_ch = zeros(1,K);
-% half_wavelengh = 1 / 2;
-% segma = 1e-14; %power of noise: 10^-11 mW
-% c = 3 * 10e8;%speed of light
-% lambda = c / (f * 10e6);%wavelength
-% l = lambda * half_wavelengh;%Distance between antennas scale in m
-% l1 = l / lambda;
-
-% %initalize
-% for k=1:K
-%     power_tag(k) = 1;
-%     a_ch(k) = 0.01;
-% end
 
 %%Inter-symbol interference
 PC = zeros(K,K);
@@ -324,19 +362,72 @@ for k = 1:K
     R_cl(k) = log2(1 + SINR(k));
 end
 
-R_cl_min(n) = min(R_cl(1,:));
-R_cl_sum(n) = sum(R_cl(1,:));
+R_cl_MR_min(n) = min(R_cl(1,:));
+R_cl_MR_sum(n) = sum(R_cl(1,:));
+%%%%%%%%%%%%%%%%%%%%%%%%%     MRC END     %%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%     MMSE BEGIN     %%%%%%%%%%%%%%%%%%%%%%%%%
+%compute channel gain
+gain = zeros(M_cl*Na_cl, K);
+gMK = zeros(M_cl,K,Na_cl);
+for idx = 1:Na_cl
+    gMK(:,:,idx) = BETAA.^(1/2).*exp(-2i*pi*( dist + (idx-1)*l*cos(theta) ) / lambda);
+end
+
+for k = 1:K
+    tmp = [];
+    for m = 1:M_cl
+        gNa = reshape(gMK(m,k,:), [Na_cl,1]);
+        tmp = [tmp;gNa];
+    end
+    gain(:,k) = tmp;
+end
+%some parameters
+p = power_tag(1) * a_ch(1)^2 * ones(K,1);
+diagP = diag(p);
+eyeMNa = segma * eye(M_cl*Na_cl);
+%compute MMSE combining
+V_MMSE = ((gain*diagP*gain')+eyeMNa)\(gain*diagP); %Matrix M_cl*Na_cl ✖️ K
+%compute SINR
+SINR = zeros(1,K);
+R_cl = zeros(1,K);
+for k = 1:K
+    v = V_MMSE(:,k);
+    deno = 0;
+    for ii = 1:K
+        deno = deno + power_tag(ii) * a_ch(ii)^2 * abs(v' * gain(:,ii))^2;
+    end
+    partialSum = power_tag(k) * a_ch(k)^2 * abs(v' * gain(:,k))^2;
+    SINR(k) = partialSum / (deno - partialSum + segma * norm(v)^2);
+    R_cl(k) = log2(1 + SINR(k));
+end
+R_cl_MMSE_min(n) = min(R_cl(1,:));
+R_cl_MMSE_sum(n) = sum(R_cl(1,:));
+
+%%%%%%%%%%%%%%%%%%%%%%%%%     MMSE END     %%%%%%%%%%%%%%%%%%%%%%%%%
 end
 
 Y=linspace(0,1,N);
 
+
 figure(1)
-hold on 
-plot(sort(R_cf_min),Y(:),'r');
-plot(sort(R_cl_min),Y(:),'b');
+hold on;
+plot(sort(R_cf_MR_min), Y(:), 'r-', 'LineWidth',1.25);
+plot(sort(R_cl_MR_min), Y(:), 'r--', 'LineWidth',1.25);
+plot(sort(R_cf_MMSE_min), Y(:), 'b-', 'LineWidth',1.25);
+plot(sort(R_cl_MMSE_min), Y(:), 'b--', 'LineWidth',1.25);
+xlabel('Spectral efficiency [bit/s/Hz]','FontSize',13);
+ylabel('CDF','FontSize',13);
+legend('MRC(Cell-Free mMIMO)','MRC(Collocated mMIMO)','MMSE(Cell-Free mMIMO)','MMSE(Collocated mMIMO)');
+
 
 figure(2)
-hold on
-plot(sort(R_cf_sum),Y(:),'r');
-plot(sort(R_cl_sum),Y(:),'b');
+hold on;
+plot(sort(R_cf_MR_sum), Y(:), 'r-', 'LineWidth',1.25);
+plot(sort(R_cl_MR_sum), Y(:), 'r--', 'LineWidth',1.25);
+plot(sort(R_cf_MMSE_sum), Y(:), 'b-', 'LineWidth',1.25);
+plot(sort(R_cl_MMSE_sum), Y(:), 'b--', 'LineWidth',1.25);
+xlabel('Sum spectral efficiency [bit/s/Hz]','FontSize',13);
+ylabel('CDF','FontSize',13);
+legend('MRC(Cell-Free mMIMO)','MRC(Collocated mMIMO)','MMSE(Cell-Free mMIMO)','MMSE(Collocated mMIMO)');
