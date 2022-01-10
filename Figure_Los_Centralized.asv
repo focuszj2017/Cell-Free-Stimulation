@@ -33,7 +33,7 @@ N=200;%number of loops
 power_tag = zeros(1,K);% power of signals emmit by tag k
 a_ch = zeros(1,K);% channel gain forward
 half_wavelengh = 1 / 2;
-segma = 1e-14; %power of noise: 10^-11 mW
+segma = 1e-11; %power of noise: 10^-11 mW
 c = 3 * 1e8;%speed of light
 lambda = c / (f * 1e6);%wavelength
 l = lambda * half_wavelengh;%Distance between antennas scale in m
@@ -56,11 +56,11 @@ R_cl_MR_sum=zeros(1,N);%capacity
 R_cl_MMSE_min=zeros(1,N);
 R_cl_MMSE_sum=zeros(1,N);
 
-%%%%%% APs in Cell Free%%%%%
+%% APs in Cell Free
 %%% Randomly locations of M APs%%%
 AP=zeros(M,2,9);
 %Grid fixed
-APpositions = FixedAPSetup(M, D);
+APpositions = functionLocalScattering(M, D);
 for m = 1 : M
     AP(m,1,1) = real(APpositions(m));
     AP(m,2,1) = imag(APpositions(m));
@@ -102,7 +102,7 @@ D8=D8- D*ones(M,2);
 AP(:,:,9)=AP(:,:,1)+D8;
 
 
-%%%%%% APs in Collocated Massive MIMO%%%%%
+%% APs in Collocated Massive MIMO
 AP_cl=zeros(M_cl,2,9);
 AP_cl(1,:,1) = [0 0];
 
@@ -141,11 +141,10 @@ D8=zeros(M_cl,2);
 D8=D8- D*ones(M_cl,2);
 AP_cl(:,:,9)=AP_cl(:,:,1)+D8;
 
-
 parfor n=1:N
     n
 
-%Randomly locations of K terminals:
+%% Randomly locations of K terminals:
 Ter=zeros(K,2,9);
 Ter(:,:,1)=unifrnd(-D/2,D/2,K,2);
 
@@ -388,7 +387,7 @@ p = power_tag(1) * a_ch(1)^2 * ones(K,1);
 diagP = diag(p);
 eyeMNa = segma * eye(M_cl*Na_cl);
 %compute MMSE combining
-V_MMSE = ((gain*diagP*gain')+eyeMNa)\(gain*diagP); %Matrix M_cl*Na_cl ✖️ K
+V_MMSE = ((gain*diagP*gain')+eyeMNa)\(gain*diagP); %Matrix M_clNa_cl * K
 %compute SINR
 SINR = zeros(1,K);
 R_cl = zeros(1,K);
