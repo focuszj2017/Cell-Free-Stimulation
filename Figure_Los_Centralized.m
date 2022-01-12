@@ -8,11 +8,11 @@ clear all
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Inital parameters
-M = 100; %number of access points in cell free
+M = 25; %number of access points in cell free
 K = 40; %number of terminals
 Na = 4; %number of antennas per AP in cell free
 M_cl = 1;%number of APs in collocated massive MIMO
-Na_cl = 400;%number of antennas per AP in collocated
+Na_cl = 100;%number of antennas per AP in collocated
 
 
 D=1; %in kilometer
@@ -27,7 +27,7 @@ L = 46.3+33.9*log10(f)-13.82*log10(Hb)-aL;
 d0=0.01;%km
 d1=0.05;%km
 
-N=200;%number of loops
+N=50;%number of loops
 
 %Some adjustable parameters
 power_tag = zeros(1,K);% power of signals emmit by tag k
@@ -41,8 +41,8 @@ l1 = l / lambda;
 
 %initalize
 for k=1:K
-    power_tag(k) = 100;
-    a_ch(k) = 0.01;
+    power_tag(k) = 1000;
+    a_ch(k) = 1;
 end
 
 R_cf_MR_min=zeros(1,N);%min rate, cell-free
@@ -141,7 +141,7 @@ D8=zeros(M_cl,2);
 D8=D8- D*ones(M_cl,2);
 AP_cl(:,:,9)=AP_cl(:,:,1)+D8;
 
-parfor n=1:N
+for n=1:N
     n
 
 %% Randomly locations of K terminals:

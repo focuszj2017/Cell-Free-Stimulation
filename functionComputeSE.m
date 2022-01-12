@@ -37,7 +37,7 @@ function [SE_MRC, SE_MMSE] = functionComputeSE(nbrOfRealizations,Beta,Hhat,M,K,N
     %% MRC combining (Mathmatics methods)
     for k = 1:K
         numerator = p(k) * N * alpha_f^2 * sum(Beta(:,k))^2;
-        denominator = p(k) * alpha_f^2 * sum(  (Beta(:,k)' * Beta)  ) + segma * sum(Beta(:,k)) - numerator;
+        denominator = p(k) * alpha_f^2 * sum(  (Beta(:,k)' * Beta)  ) + segma * sum(Beta(:,k));
         SE_MRC(k) = log2(1 + numerator / denominator);
     end
     

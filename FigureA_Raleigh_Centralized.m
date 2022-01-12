@@ -18,13 +18,13 @@ K = 40;
 %Number of antennas per AP
 N = 4;
 
-%Uplink transmit power emmit by each Tag (mW)
-p = 100;
+%Uplink transmit power emmit by each Tag (W)
+p = 1000;
 
-%power control coefficients (mW)
+%power control coefficients (W)
 alpha_f = 1;
 
-%power of noise (mW)
+%power of noise (W)
 segma = 1e-14;
 
 %Prepare to save simulation results
@@ -67,5 +67,5 @@ plot(sort(reshape(SE_CF_MRC_tot,[K*nbrOfSetups,1])), linspace(0,1,K*nbrOfSetups)
 plot(sort(reshape(SE_CF_MMSE_tot,[K*nbrOfSetups,1])), linspace(0,1,K*nbrOfSetups),'r-','LineWidth',2);
 xlabel('Spectral efficiency [bit/s/Hz]','Interpreter','Latex');
 ylabel('CDF','Interpreter','Latex');
-%legend({'CellFree (MRC)','CellFree (MMSE)'},'Interpreter','Latex','Location','NorthWest');
+legend({'CellFree (MRC)','CellFree (MMSE)'},'Interpreter','Latex','Location','NorthWest');
 %xlim([0 10]);
