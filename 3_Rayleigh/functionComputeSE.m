@@ -34,12 +34,12 @@ function [SE_MRC, SE_MMSE] = functionComputeSE(nbrOfRealizations,Beta,Hhat,M,K,N
     SE_MRC = zeros(K,1);
     SE_MMSE = zeros(K,1);
 
-    %% MRC combining (Mathmatics methods)
-    for k = 1:K
-        numerator = p(k) * N * alpha_f^2 * sum(Beta(:,k))^2;
-        denominator = p(k) * alpha_f^2 * sum(  (Beta(:,k)' * Beta)  ) + segma * sum(Beta(:,k));
-        SE_MRC(k) = log2(1 + numerator / denominator);
-    end
+%     %% MRC combining (Mathmatics methods)
+%     for k = 1:K
+%         numerator = p(k) * N * alpha_f^2 * sum(Beta(:,k))^2;
+%         denominator = p(k) * alpha_f^2 * sum(  (Beta(:,k)' * Beta)  ) + segma * sum(Beta(:,k));
+%         SE_MRC(k) = log2(1 + numerator / denominator);
+%     end
     
     %% MMSE combining
 
@@ -62,15 +62,15 @@ function [SE_MRC, SE_MMSE] = functionComputeSE(nbrOfRealizations,Beta,Hhat,M,K,N
         %Go through all UEs
         for k = 1:K
 
-%             %%MRC combining
-%             v = Hhatallj(:,k); %Extract combining vector
-%         
-%             %Compute numerator and denominator of instantaneous SINR at Level 4
-%             numerator = p(k)*abs(v'*Hhatallj(:,k))^2;
-%             denominator = norm(v'*Hhatallj*Dp12)^2 + v'*(segma*eyeMN)*v - numerator;
-%         
-%             %Compute instantaneous SE for one channel realization
-%             SE_MRC(k) = SE_MRC(k) + real(log2(1+numerator/denominator))/nbrOfRealizations;
+            %%MRC combining
+            v = Hhatallj(:,k); %Extract combining vector
+        
+            %Compute numerator and denominator of instantaneous SINR at Level 4
+            numerator = p(k)*abs(v'*Hhatallj(:,k))^2;
+            denominator = norm(v'*Hhatallj*Dp12)^2 + v'*(segma*eyeMN)*v - numerator;
+        
+            %Compute instantaneous SE for one channel realization
+            SE_MRC(k) = SE_MRC(k) + real(log2(1+numerator/denominator))/nbrOfRealizations;
             
             %Combining vector
             v = V_MMSE(:,k);

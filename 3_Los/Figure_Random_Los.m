@@ -15,7 +15,7 @@ M_cl = 1;%number of APs in collocated massive MIMO
 Na_cl = 400;%number of antennas per AP in collocated
 
 
-D=1; %in kilometer
+D=3; %in kilometer
 
 %B=20; %Mhz
 Hb = 15; % Base station height in m
@@ -27,7 +27,7 @@ L = 46.3+33.9*log10(f)-13.82*log10(Hb)-aL;
 d0=0.01;%km
 d1=0.05;%km
 
-N=200;
+N=1000;
 R_cf_min=zeros(1,N);%min rate, cell-free, without power allocation
 
 R_cl_min=zeros(1,N);%collocated massive MIMO
@@ -321,5 +321,5 @@ Y=linspace(0,1,N);
 
 hold on 
 plot(sort(R_cf_min),Y(:),'r');
-polt(sort(R_cl_min),Y(:),'b');
+plot(sort(R_cl_min),Y(:),'b');
 %plot(sort(R_sc_opt_min),Y(:),'b')

@@ -8,11 +8,11 @@ clear all
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Inital parameters
-M = 25; %number of access points in cell free
 K = 40; %number of terminals
+M = 100; %number of access points in cell free
 Na = 4; %number of antennas per AP in cell free
 M_cl = 1;%number of APs in collocated massive MIMO
-Na_cl = 100;%number of antennas per AP in collocated
+Na_cl = 400;%number of antennas per AP in collocated
 
 
 D=1; %in kilometer
@@ -27,13 +27,14 @@ L = 46.3+33.9*log10(f)-13.82*log10(Hb)-aL;
 d0=0.01;%km
 d1=0.05;%km
 
-N=50;%number of loops
+N=2000;%number of loops
 
 %Some adjustable parameters
 power_tag = zeros(1,K);% power of signals emmit by tag k
 a_ch = zeros(1,K);% channel gain forward
 half_wavelengh = 1 / 2;
-segma = 1e-11; %power of noise: 10^-11 mW
+noiseFigure = -96;% NF：-96dBm
+segma = 10^(noiseFigure/10)/1000; %power of noise: W
 c = 3 * 1e8;%speed of light
 lambda = c / (f * 1e6);%wavelength
 l = lambda * half_wavelengh;%Distance between antennas scale in m
@@ -41,7 +42,7 @@ l1 = l / lambda;
 
 %initalize
 for k=1:K
-    power_tag(k) = 1000;
+    power_tag(k) = 0.1;
     a_ch(k) = 1;
 end
 
@@ -141,7 +142,7 @@ D8=zeros(M_cl,2);
 D8=D8- D*ones(M_cl,2);
 AP_cl(:,:,9)=AP_cl(:,:,1)+D8;
 
-for n=1:N
+parfor n=1:N
     n
 
 %% Randomly locations of K terminals:
@@ -198,16 +199,18 @@ theta = zeros(M, K);%the angle from user k to AP m
 for m = 1:M  
     for k = 1:K
     [dist(m,k),index] = min([norm(AP(m,:,1)-Ter(k,:,1)), norm(AP(m,:,2)-Ter(k,:,1)),norm(AP(m,:,3)-Ter(k,:,1)),norm(AP(m,:,4)-Ter(k,:,1)),norm(AP(m,:,5)-Ter(k,:,1)),norm(AP(m,:,6)-Ter(k,:,1)),norm(AP(m,:,7)-Ter(k,:,1)),norm(AP(m,:,8)-Ter(k,:,1)),norm(AP(m,:,9)-Ter(k,:,1)) ]); %distance between Terminal k and AP m
-    if dist(m,k)<d0
-        betadB = -L - 35*log10(d1) + 20*log10(d1) - 20*log10(d0);
-    elseif ((dist(m,k)>=d0) && (dist(m,k)<=d1))
-        betadB = -L - 35*log10(d1) + 20*log10(d1) - 20*log10(dist(m,k));
-    else
-        betadB = -L - 35*log10(dist(m,k)); %large-scale in dB
+%     if dist(m,k)<d0
+%         betadB = -L - 35*log10(d1) + 20*log10(d1) - 20*log10(d0);
+%     elseif ((dist(m,k)>=d0) && (dist(m,k)<=d1))
+%         betadB = -L - 35*log10(d1) + 20*log10(d1) - 20*log10(dist(m,k));
+%     else
+%         betadB = -L - 35*log10(dist(m,k)); %large-scale in dB
+%     end
+    if dist(m,k) < 0.01
+        dist(m,k) = 0.01;
     end
-    
+    betadB = -30.5-36.7*log10(dist(m,k)*1000);    
     BETAA(m,k) = 10^(betadB / 10); 
-
     theta(m,k) = atan(abs(Ter(k,2,1) - AP(m,2,index)) / abs(Ter(k,1,1) - AP(m,1,index)));
     end
 
@@ -310,14 +313,17 @@ theta = zeros(M_cl,K);%the angle from user k to AP m
 for m = 1:M_cl  
     for k = 1:K
     [dist(m,k),index] = min([norm(AP_cl(m,:,1)-Ter(k,:,1)), norm(AP_cl(m,:,2)-Ter(k,:,1)),norm(AP_cl(m,:,3)-Ter(k,:,1)),norm(AP_cl(m,:,4)-Ter(k,:,1)),norm(AP_cl(m,:,5)-Ter(k,:,1)),norm(AP_cl(m,:,6)-Ter(k,:,1)),norm(AP_cl(m,:,7)-Ter(k,:,1)),norm(AP_cl(m,:,8)-Ter(k,:,1)),norm(AP_cl(m,:,9)-Ter(k,:,1)) ]); %distance between Terminal k and AP m
-    if dist(m,k)<d0
-        betadB = -L - 35*log10(d1) + 20*log10(d1) - 20*log10(d0);
-    elseif ((dist(m,k)>=d0) && (dist(m,k)<=d1))
-        betadB = -L - 35*log10(d1) + 20*log10(d1) - 20*log10(dist(m,k));
-    else
-        betadB = -L - 35*log10(dist(m,k)); %large-scale in dB
+%     if dist(m,k)<d0
+%         betadB = -L - 35*log10(d1) + 20*log10(d1) - 20*log10(d0);
+%     elseif ((dist(m,k)>=d0) && (dist(m,k)<=d1))
+%         betadB = -L - 35*log10(d1) + 20*log10(d1) - 20*log10(dist(m,k));
+%     else
+%         betadB = -L - 35*log10(dist(m,k)); %large-scale in dB
+%     end
+    if dist(m,k) < 0.01
+        dist(m,k)=0.01;
     end
-    
+    betadB = -30.5-36.7*log10(dist(m,k)*1000);
     BETAA(m,k) = 10^(betadB / 10); 
 
     theta(m,k) = atan(abs(Ter(k,2,1) - AP_cl(m,2,index)) / abs(Ter(k,1,1) - AP_cl(m,1,index)));
@@ -412,21 +418,21 @@ Y=linspace(0,1,N);
 
 figure(1)
 hold on;
-plot(sort(R_cf_MR_min), Y(:), 'r-', 'LineWidth',1.25);
-plot(sort(R_cl_MR_min), Y(:), 'r--', 'LineWidth',1.25);
-plot(sort(R_cf_MMSE_min), Y(:), 'b-', 'LineWidth',1.25);
-plot(sort(R_cl_MMSE_min), Y(:), 'b--', 'LineWidth',1.25);
-xlabel('Spectral efficiency [bit/s/Hz]','FontSize',13);
-ylabel('CDF','FontSize',13);
-legend('MRC(Cell-Free mMIMO)','MRC(Collocated mMIMO)','MMSE(Cell-Free mMIMO)','MMSE(Collocated mMIMO)');
+plot(sort(R_cf_MR_min), Y(:), 'r--', 'LineWidth',2);
+plot(sort(R_cf_MMSE_min), Y(:), 'r-', 'LineWidth',2);
+plot(sort(R_cl_MR_min), Y(:), 'b--', 'LineWidth',2);
+plot(sort(R_cl_MMSE_min), Y(:), 'b-', 'LineWidth',2);
+xlabel('频谱效率 [bit/s/Hz]','FontSize',13);
+ylabel('累计分布函数','FontSize',13);
+legend('分布式MIMO(MRC)','分布式MIMO(MMSE)','集中式(MRC)','集中式(MMSE)');
 
 
 figure(2)
 hold on;
-plot(sort(R_cf_MR_sum), Y(:), 'r-', 'LineWidth',1.25);
-plot(sort(R_cl_MR_sum), Y(:), 'r--', 'LineWidth',1.25);
-plot(sort(R_cf_MMSE_sum), Y(:), 'b-', 'LineWidth',1.25);
-plot(sort(R_cl_MMSE_sum), Y(:), 'b--', 'LineWidth',1.25);
-xlabel('Sum spectral efficiency [bit/s/Hz]','FontSize',13);
-ylabel('CDF','FontSize',13);
-legend('MRC(Cell-Free mMIMO)','MRC(Collocated mMIMO)','MMSE(Cell-Free mMIMO)','MMSE(Collocated mMIMO)');
+plot(sort(R_cf_MR_sum), Y(:), 'r--', 'LineWidth',2);
+plot(sort(R_cf_MMSE_sum), Y(:), 'r-', 'LineWidth',2);
+plot(sort(R_cl_MR_sum), Y(:), 'b--', 'LineWidth',2);
+plot(sort(R_cl_MMSE_sum), Y(:), 'b-', 'LineWidth',2);
+xlabel('频谱效率 [bit/s/Hz]','FontSize',13);
+ylabel('累计分布函数','FontSize',13);
+legend('分布式MIMO(MRC)','分布式MIMO(MMSE)','集中式(MRC)','集中式(MMSE)');

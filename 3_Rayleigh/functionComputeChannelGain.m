@@ -31,7 +31,7 @@ function [Hhat] = functionComputeChannelGain(nbrOfRealizations, Beta, alpha_f, M
     Gain = zeros(M*N, K);
     %Beta in each AP replicates the number of atennas
     for m = 1:M
-        Gain((m-1)*N+1 : m*N, :) = repmat(Beta(m,:), N, 1);
+        Gain((m-1)*N+1 : m*N, :) = repmat(sqrt(Beta(m,:)), N, 1);
     end
     %reshape matrix to [M*N nbrOfRealizations K]
     Gain = reshape(Gain, [M*N, 1, K]);
