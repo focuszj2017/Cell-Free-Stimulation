@@ -1,4 +1,4 @@
-function[pathLoss, theta, APpositions, UEpositions] = generateSetup(M,K,N)
+function[pathLoss,dist,theta, APpositions, UEpositions] = generateSetup(M,K,N)
 
 %INPUT:
 %M                  = Number of APs for the Cell-free system
@@ -127,7 +127,7 @@ for m = 1:M
     end
     betadB = -30.5-36.7*log10(dist(m,k)*1000);
     pathLoss(m,k) = 10^(betadB / 10); 
-    theta(m,k) = atan(abs(Ter(k,2,1) - AP(m,2,index)) / abs(Ter(k,1,1) - AP(m,1,index)));
+    theta(m,k) = atan(abs(UEpositions(k,2,1) - APpositions(m,2,index)) / abs(UEpositions(k,1,1) - APpositions(m,1,index)));
     end
 
 end

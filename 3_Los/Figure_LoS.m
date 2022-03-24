@@ -24,8 +24,17 @@ p = 0.1;
 %power control coefficients (W)
 alpha_f = 1;
 
+%Carrier frequency(MHz)
+f = 900;
+
 %power of noise (W)
 segma = 10^(-96/10)/1000;
+
+%Wavelength (m)
+lambda = (3*1e8)/(f*1e6);
+
+%Distance between antennas (m)
+l = lambda * 0.5;
 
 %Number of APs in the small-cell network
 M_cl = 1;
@@ -47,24 +56,24 @@ for n = 1:nbrOfSetups
 
     %% Cell-Free mMIMO
     %Generate one setup with UEs at random locations
-    [pathLoss,theta] = generateSetup(M,K,N);
+    [Beta,dist,theta] = generateSetup(M,K,N);
 
     %Generate channel realizations
     %channel gain for MMSE
-    [Hhat] = functionComputeChannelGain(nbrOfRealizations, pathLoss, theta, alpha_f, M, K, N);
+    [Hhat] = functionComputeChannelGain(nbrOfRealizations,Beta,dist,theta,alpha_f,M,K,N,l,lambda);
 
     %Compute SE for the Cell-free mMIMO system with Monte Carlo simulations
-    [SE_CF_MRC, SE_CF_MMSE] = functionComputeSE_parfor(nbrOfRealizations,pathLoss,Hhat,M,K,N,alpha_f,segma,p);
+    [SE_CF_MRC, SE_CF_MMSE] = functionComputeSE(nbrOfRealizations,Beta,dist,theta,Hhat,M,K,N,alpha_f,segma,p,l,lambda);
 
     %% Small-cell
     %Generate one setup with UEs at random locations
-    [pathLoss] = generateSetup(M_cl,K,N_cl);
+    [Beta,dist,theta] = generateSetup(M_cl,K,N_cl);
 
     %Generate channel realizations
     %channel gain for MMSE
-    [Hhat] = functionComputeChannelGain(nbrOfRealizations, pathLoss, alpha_f, M_cl, K, N_cl);
+    [Hhat] = functionComputeChannelGain(nbrOfRealizations, Beta,dist,theta,alpha_f,M_cl,K,N_cl,l,lambda);
     %Compute SE for the small-cell system with Monte Carlo simulations
-    [SE_CL_MRC, SE_CL_MMSE] = functionComputeSE_parfor(nbrOfRealizations,pathLoss,Hhat,M_cl,K,N_cl,alpha_f,segma,p);
+    [SE_CL_MRC, SE_CL_MMSE] = functionComputeSE(nbrOfRealizations,Beta,dist,theta,Hhat,M_cl,K,N_cl,alpha_f,segma,p,l,lambda);
     
     %Save SE values
     SE_CF_MRC_tot(:,n) = SE_CF_MRC;
@@ -83,6 +92,26 @@ SE_CL_MRC_sum = sum(SE_CL_MRC_tot,1);
 SE_CL_MMSE_sum = sum(SE_CL_MMSE_tot,1);
 
 %% Plot simulation results
+
+% figure(1);
+% hold on; box on;
+% plot(sort(reshape(SE_CF_MRC_tot,[K*nbrOfSetups,1])), linspace(0,1,K*nbrOfSetups),'r--','LineWidth',2);
+% plot(sort(reshape(SE_CF_MMSE_tot,[K*nbrOfSetups,1])), linspace(0,1,K*nbrOfSetups),'r-','LineWidth',2);
+% plot(sort(reshape(SE_CL_MRC_tot,[K*nbrOfSetups,1])), linspace(0,1,K*nbrOfSetups),'b--','LineWidth',2);
+% plot(sort(reshape(SE_CL_MMSE_tot,[K*nbrOfSetups,1])), linspace(0,1,K*nbrOfSetups),'b-','LineWidth',2);
+% xlabel('Spectral Efficiency [bit/s/Hz]');
+% ylabel('CDF');
+% legend('Cell-Free(MRC)','Cell-Free(MMSE)','Small-Cell(MRC)','Small-Cell(MMSE)');
+% 
+% figure(2)
+% hold on; box on;
+% plot(sort(SE_CF_MRC_sum), linspace(0,1,nbrOfSetups),'r--','LineWidth',2);
+% plot(sort(SE_CF_MMSE_sum), linspace(0,1,nbrOfSetups),'r-','LineWidth',2);
+% plot(sort(SE_CL_MRC_sum), linspace(0,1,nbrOfSetups),'b--','LineWidth',2);
+% plot(sort(SE_CL_MMSE_sum), linspace(0,1,nbrOfSetups),'b-','LineWidth',2);
+% xlabel('Sum of Spectral Efficency[bit/s/Hz]');
+% ylabel('CDF');
+% legend('Cell-Free(MRC)','Cell-Free(MMSE)','Small-Cell(MRC)','Small-Cell(MMSE)');
 
 figure(1);
 hold on; box on;
@@ -103,4 +132,3 @@ plot(sort(SE_CL_MMSE_sum), linspace(0,1,nbrOfSetups),'b-','LineWidth',2);
 xlabel('Sum of Spectral Efficency[bit/s/Hz]');
 ylabel('CDF');
 legend('Cell-Free(MRC)','Cell-Free(MMSE)','Small-Cell(MRC)','Small-Cell(MMSE)');
-

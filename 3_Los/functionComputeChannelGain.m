@@ -1,6 +1,6 @@
-function [Hhat] = functionComputeChannelGain(nbrOfRealizations, Beta, theta, alpha_f, M, K, N)
+function [Hhat] = functionComputeChannelGain(nbrOfRealizations,Beta,dist,theta,alpha_f,M,K,N,l,lambda)
     %Generate the channel realizations and compute the channel gain for all channels.The channels are modeled 
-    %as uncorrelated Rayleigh fading and the MMSE estimator is used.
+    %as uncorrelated Line of Sight and the MMSE estimator is used.
     %
     %INPUT:
     %nbrOfRealizations = Number of channel realizations
@@ -19,37 +19,10 @@ function [Hhat] = functionComputeChannelGain(nbrOfRealizations, Beta, theta, alp
     %
 
     %% Generate channel gain
-    %forward channel 
-    a_ch = alpha_f
-
-    %backward channel
-    %channel gain
-    Gain = zeros(M*N, K);
-    %Beta in each AP replicates the number of atennas
-    for m = 1:M
-        Gain((m-1)*N+1 : m*N, :) = repmat(sqrt(Beta(m,:)), N, 1);
-    end
-    %reshape matrix to [M*N nbrOfRealizations K]
-    Gain = reshape(Gain, [M*N, 1, K]);
-    Gain = repmat(Gain, [1 nbrOfRealizations 1]);
-    %backward channel gain
-    Gain = Gain.*H_b;
-    
-    %compute the total channel gain
-    Hhat = zeros(M*N, nbrOfRealizations, K);
-    %hk = ak * gk
-    for k = 1:K
-        for n = 1:nbrOfRealizations
-            Hhat(:,n,k) = a_ch(1,n,k) * Gain(:,n,k);
-        end
-    end
-    
-    
-    Hhat = zeros(M*N, K);
+    Hhat = zeros(M*N,K);
     Gain = zeros(M,K,N);
-    %% ToDO
     for idx = 1:N
-        Gain(:,:,idx) = BETAA.^(1/2).*exp(-2i*pi*( dist + (idx-1)*l*cos(theta) ) / lambda);
+        Gain(:,:,idx) = Beta.^(1/2).*exp(-2i*pi*( dist + (idx-1)*l*cos(theta) ) / lambda);
     end
     
     for k = 1:K

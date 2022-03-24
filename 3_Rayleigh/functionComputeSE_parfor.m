@@ -1,5 +1,5 @@
 function [SE_MRC, SE_MMSE] = functionComputeSE_parfor(nbrOfRealizations,Beta,Hhat,M,K,N,alpha_f,segma,p)
-    %Compute uplink SE for Cell-Free mMIMO network.
+    %Compute uplink SE for Cell-Free mMIMO network in Rayleigh channel.
     %Combining methods including MRC and MMSE combining are used.
     %
     %INPUT:
