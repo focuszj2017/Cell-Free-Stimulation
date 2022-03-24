@@ -3,16 +3,16 @@ clear;
 
 %% Simulation
 %Number of setups with random UE locations
-nbrOfSetups = 200;
+nbrOfSetups = 100;
 
 %Number of tags
 K = 9;
 
 %Total number of antennas is 36
-[SE_CF_MMSE_tot_4_9, SE_CF_MMSE_sum_4_9, SE_CF_MRC_tot_4_9, SE_CF_MRC_sum_4_9] = function_AP_number(4,9,K);
-[SE_CF_MMSE_tot_9_4, SE_CF_MMSE_sum_9_4, SE_CF_MRC_tot_9_4, SE_CF_MRC_sum_9_4] = function_AP_number(9,4,K);
-[SE_CF_MMSE_tot_1_36, SE_CF_MMSE_sum_1_36, SE_CF_MRC_tot_1_36, SE_CF_MRC_sum_1_36] = function_AP_number(1,36,K);
-[SE_CF_MMSE_tot_36_1, SE_CF_MMSE_sum_36_1, SE_CF_MRC_tot_36_1, SE_CF_MRC_sum_36_1] = function_AP_number(36,1,K);
+[SE_CF_MMSE_tot_4_9, SE_CF_MMSE_sum_4_9, SE_CF_MRC_tot_4_9, SE_CF_MRC_sum_4_9] = function_AP_number(4,9,K,nbrOfSetups);
+[SE_CF_MMSE_tot_9_4, SE_CF_MMSE_sum_9_4, SE_CF_MRC_tot_9_4, SE_CF_MRC_sum_9_4] = function_AP_number(9,4,K,nbrOfSetups);
+[SE_CF_MMSE_tot_1_36, SE_CF_MMSE_sum_1_36, SE_CF_MRC_tot_1_36, SE_CF_MRC_sum_1_36] = function_AP_number(1,36,K,nbrOfSetups);
+[SE_CF_MMSE_tot_36_1, SE_CF_MMSE_sum_36_1, SE_CF_MRC_tot_36_1, SE_CF_MRC_sum_36_1] = function_AP_number(36,1,K,nbrOfSetups);
 
 %% Plot simulation results
 

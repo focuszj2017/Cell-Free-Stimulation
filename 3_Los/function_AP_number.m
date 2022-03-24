@@ -1,12 +1,12 @@
-function [SE_CF_MMSE_tot, SE_CF_MMSE_sum, SE_CF_MRC_tot, SE_CF_MRC_sum] = function_AP_number(M,N,K)
+function [SE_CF_MMSE_tot, SE_CF_MMSE_sum, SE_CF_MRC_tot, SE_CF_MRC_sum] = function_AP_number(M,N,K,nbrOfSetups)
 
 %% Define simulation setup
 
 %Number of setups with random UE locations
-nbrOfSetups = 200;
+% nbrOfSetups = 200;
 
 %Number of channel realizations per setup
-nbrOfRealizations = 2000;
+nbrOfRealizations = 1000;
 
 %Number of APs in the cell-free network
 % M = 16;
@@ -23,8 +23,17 @@ p = 0.1;
 %power control coefficients (W)
 alpha_f = 1;
 
+%Carrier frequency(MHz)
+f = 900;
+
 %power of noise (W)
 segma = 10^(-96/10)/1000;
+
+%Wavelength (m)
+lambda = (3*1e8)/(f*1e6);
+
+%Distance between antennas (m)
+l = lambda * 0.5;
 
 %Prepare to save simulation results
 SE_CF_MRC_tot = zeros(K,nbrOfSetups);

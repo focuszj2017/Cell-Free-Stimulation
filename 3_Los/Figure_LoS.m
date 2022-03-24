@@ -4,16 +4,16 @@ clear;
 %% Define simulation setup
 
 %Number of setups with random UE locations
-nbrOfSetups = 200;
+nbrOfSetups = 50;
 
 %Number of channel realizations per setup
-nbrOfRealizations = 2000;
+nbrOfRealizations = 1000;
 
 %Number of APs in the cell-free network
-M = 16;
+M = 64;
 
 %Number of UEs in the network
-K = 4;
+K = 16;
 
 %Number of antennas per AP
 N = 2;
@@ -132,3 +132,8 @@ plot(sort(SE_CL_MMSE_sum), linspace(0,1,nbrOfSetups),'b-','LineWidth',2);
 xlabel('Sum of Spectral Efficency[bit/s/Hz]');
 ylabel('CDF');
 legend('Cell-Free(MRC)','Cell-Free(MMSE)','Small-Cell(MRC)','Small-Cell(MMSE)');
+
+legend('分布式MIMO接收机（MRC)','分布式MIMO接收机（MMSE）','集中式MIMO接收机（MRC）','集中式MIMO接收机（MMSE）');
+ylabel('累计分布函数');
+xlabel('频谱效率 [bit/s/Hz]');
+xlabel('频谱效率总和 [bit/s/Hz]');

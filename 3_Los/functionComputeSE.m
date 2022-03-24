@@ -39,7 +39,7 @@ function [SE_MRC, SE_MMSE] = functionComputeSE(nbrOfRealizations,Beta,dist,theta
     SE_MMSE_tot = zeros(K,nbrOfRealizations);
     
     %Go through all realizations
-    for n = 1:nbrOfRealizations
+    parfor n = 1:nbrOfRealizations
         %% MRC combining
         
         %%Inter-symbol interference
@@ -64,6 +64,8 @@ function [SE_MRC, SE_MMSE] = functionComputeSE(nbrOfRealizations,Beta,dist,theta
         end
         PC1 = (abs(PC)).^2;
     
+        %Ssave temp results
+        SE_MRC_tot_tmp = zeros(K,1);
         for k = 1:K
             deno = 0;
             for ii = 1:K
@@ -75,12 +77,18 @@ function [SE_MRC, SE_MMSE] = functionComputeSE(nbrOfRealizations,Beta,dist,theta
             denominator = deno - p(k) * alpha_f^2 * N * sum(Beta(:,k)) + segma;
             
             %Compute instantaneous SE for one channel realization
-            SE_MRC_tot(k,n) =  real(log2(1+numerator/denominator))/nbrOfRealizations;
+            SE_MRC_tot_tmp(k) =  real(log2(1+numerator/denominator))/nbrOfRealizations;
         end
+        SE_MRC_tot(:,n) = SE_MRC_tot_tmp;
         
         %% MMSE combining
+        %Ssave temp results
+        SE_MMSE_tot_tmp = zeros(K,1);
         
+        %Combning vector
         V_MMSE = ((Hhat*diagP*Hhat')+eyeMN)\(Hhat*diagP); %Matrix MN * K
+        
+        %Go through all UEs
         for k = 1:K
             v = V_MMSE(:,k);
             deno = 0;
@@ -93,8 +101,9 @@ function [SE_MRC, SE_MMSE] = functionComputeSE(nbrOfRealizations,Beta,dist,theta
             denominator = deno - numerator + segma * norm(v)^2;
             
             %Compute instantaneous SE for one channel realization
-            SE_MMSE_tot(k,n) =  real(log2(1+numerator/denominator))/nbrOfRealizations;
+            SE_MMSE_tot_tmp(k) =  real(log2(1+numerator/denominator))/nbrOfRealizations;
         end
+        SE_MMSE_tot(:,n) = SE_MMSE_tot_tmp;
         
     end
 

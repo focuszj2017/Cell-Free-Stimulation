@@ -1,21 +1,21 @@
-function [SE_CF_MMSE_tot, SE_CF_MMSE_sum, SE_CF_MRC_tot, SE_CF_MRC_sum] = function_BD_alpha(K, alpha_f)
+function [SE_CF_MMSE_tot, SE_CF_MMSE_sum, SE_CF_MRC_tot, SE_CF_MRC_sum] = function_BD_alpha(K, alpha_f, nbrOfSetups)
 
 %% Define simulation setup
 
 %Number of setups with random UE locations
-nbrOfSetups = 200;
+% nbrOfSetups = 200;
 
 %Number of channel realizations per setup
-nbrOfRealizations = 2000;
+nbrOfRealizations = 1000;
 
 % Number of APs in the cell-free network
-M = 64;
+M = 16;
 
 % Number of UEs in the network
 % K = 4;
 
 % Number of antennas per AP
-N = 2;
+N = 4;
 
 %Uplink transmit power emmit by each Tag (W)
 p = 0.1;
@@ -23,8 +23,17 @@ p = 0.1;
 %Reflection coefficient
 % alpha_f = 1;
 
+%Carrier frequency(MHz)
+f = 900;
+
 %power of noise (W)
 segma = 10^(-96/10)/1000;
+
+%Wavelength (m)
+lambda = (3*1e8)/(f*1e6);
+
+%Distance between antennas (m)
+l = lambda * 0.5;
 
 %Prepare to save simulation results
 SE_CF_MRC_tot = zeros(K,nbrOfSetups);

@@ -3,7 +3,7 @@ clear;
 
 %% Simulation
 %Number of setups with random UE locations
-nbrOfSetups = 200;
+nbrOfSetups = 50;
 
 %Number of tags
 K = 32;

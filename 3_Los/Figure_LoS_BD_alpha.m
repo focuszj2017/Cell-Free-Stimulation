@@ -2,20 +2,20 @@ close all;
 clear;
 
 %% Simulation
-%Don't change it
-nbrOfSetups = 200;
+%Number of setups with random UE locations
+nbrOfSetups = 50;
 
 %Number of tags
-K1 = 16;
-K2 = 32;
+K1 = 10;
+K2 = 50;
 alpha1 = 0.1;
 alpha2 = 0.5;
 
 %Total number of antennas is 36
-[SE_CF_MMSE_tot_9_1, SE_CF_MMSE_sum_9_1, SE_CF_MRC_tot_9_1, SE_CF_MRC_sum_9_1] = function_BD_alpha(K1,alpha1);
-[SE_CF_MMSE_tot_9_5, SE_CF_MMSE_sum_9_5, SE_CF_MRC_tot_9_5, SE_CF_MRC_sum_9_5] = function_BD_alpha(K1,alpha2);
-[SE_CF_MMSE_tot_16_1, SE_CF_MMSE_sum_16_1, SE_CF_MRC_tot_16_1, SE_CF_MRC_sum_16_1] = function_BD_alpha(K2,alpha1);
-[SE_CF_MMSE_tot_16_5, SE_CF_MMSE_sum_16_5, SE_CF_MRC_tot_16_5, SE_CF_MRC_sum_16_5] = function_BD_alpha(K2,alpha2);
+[SE_CF_MMSE_tot_9_1, SE_CF_MMSE_sum_9_1, SE_CF_MRC_tot_9_1, SE_CF_MRC_sum_9_1] = function_BD_alpha(K1,alpha1,nbrOfSetups);
+[SE_CF_MMSE_tot_9_5, SE_CF_MMSE_sum_9_5, SE_CF_MRC_tot_9_5, SE_CF_MRC_sum_9_5] = function_BD_alpha(K1,alpha2,nbrOfSetups);
+[SE_CF_MMSE_tot_16_1, SE_CF_MMSE_sum_16_1, SE_CF_MRC_tot_16_1, SE_CF_MRC_sum_16_1] = function_BD_alpha(K2,alpha1,nbrOfSetups);
+[SE_CF_MMSE_tot_16_5, SE_CF_MMSE_sum_16_5, SE_CF_MRC_tot_16_5, SE_CF_MRC_sum_16_5] = function_BD_alpha(K2,alpha2,nbrOfSetups);
 
 %% Plot simulation results
 

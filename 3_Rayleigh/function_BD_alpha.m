@@ -3,19 +3,19 @@ function [SE_CF_MMSE_tot, SE_CF_MMSE_sum, SE_CF_MRC_tot, SE_CF_MRC_sum] = functi
 %% Define simulation setup
 
 %Number of setups with random UE locations
-nbrOfSetups = 200;
+nbrOfSetups = 2;
 
 %Number of channel realizations per setup
-nbrOfRealizations = 2000;
+nbrOfRealizations = 100;
 
 % Number of APs in the cell-free network
-M = 4;
+M = 9;
 
 % Number of UEs in the network
 % K = 4;
 
 % Number of antennas per AP
-N = 9;
+N = 4;
 
 %Uplink transmit power emmit by each Tag (W)
 p = 0.1;
