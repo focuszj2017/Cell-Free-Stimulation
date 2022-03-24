@@ -1,4 +1,4 @@
-function [SE_MRC, SE_MMSE] = functionComputeSE(nbrOfRealizations,Beta,Hhat,M,K,N,alpha_f,segma,p)
+function [SE_MRC, SE_MMSE] = functionComputeSE_parfor(nbrOfRealizations,Beta,Hhat,M,K,N,alpha_f,segma,p)
     %Compute uplink SE for Cell-Free mMIMO network.
     %Combining methods including MRC and MMSE combining are used.
     %
@@ -31,9 +31,9 @@ function [SE_MRC, SE_MMSE] = functionComputeSE(nbrOfRealizations,Beta,Hhat,M,K,N
     eyeMN = eye(M*N);
 
     %Prepare to sotre simulation results
-    SE_MRC = zeros(K,1);
-    SE_MMSE = zeros(K,1);
-
+    SE_MRC_tot = zeros(K,nbrOfRealizations);
+    SE_MMSE_tot = zeros(K,nbrOfRealizations);
+    
 %     %% MRC combining (Mathmatics methods)
 %     for k = 1:K
 %         numerator = p(k) * N * alpha_f^2 * sum(Beta(:,k))^2;
@@ -48,10 +48,10 @@ function [SE_MRC, SE_MMSE] = functionComputeSE(nbrOfRealizations,Beta,Hhat,M,K,N
     Dp12 = diag(sqrt(p));
 
     %Go through all channel realizations
-    for n = 1:nbrOfRealizations
+    parfor n = 1:nbrOfRealizations
     
         %Display simulation progress
-%         n
+        n
 
         %Extract channel estimate realizations from all UEs to all APs
         Hhatallj = reshape(Hhat(:,n,:),[M*N, K]);
@@ -70,7 +70,7 @@ function [SE_MRC, SE_MMSE] = functionComputeSE(nbrOfRealizations,Beta,Hhat,M,K,N
             denominator = norm(v'*Hhatallj*Dp12)^2 + v'*(segma*eyeMN)*v - numerator;
         
             %Compute instantaneous SE for one channel realization
-            SE_MRC(k) = SE_MRC(k) + real(log2(1+numerator/denominator))/nbrOfRealizations;
+            SE_MRC_tot(k,n) =  real(log2(1+numerator/denominator))/nbrOfRealizations;
             
             %Combining vector
             v = V_MMSE(:,k);
@@ -80,9 +80,12 @@ function [SE_MRC, SE_MMSE] = functionComputeSE(nbrOfRealizations,Beta,Hhat,M,K,N
             denominator = norm(v'*Hhatallj*Dp12)^2 + v'*segma*eyeMN*v - numerator;
             
             %Compute instantaneous SE for one channel realization
-            SE_MMSE(k) = SE_MMSE(k) + real(log2(1 + numerator / denominator)) / nbrOfRealizations;
+            SE_MMSE_tot(k,n) =  real(log2(1 + numerator / denominator)) / nbrOfRealizations;
 
         end
-
     end
+    
+    SE_MRC = sum(SE_MRC_tot,2);
+    SE_MMSE = sum(SE_MMSE_tot,2);
+
     

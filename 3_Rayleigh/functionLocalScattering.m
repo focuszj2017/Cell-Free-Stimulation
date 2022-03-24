@@ -10,7 +10,7 @@ locationsGridVertical = locationsGridHorizontal';
 positions = locationsGridHorizontal(:) + 1i*locationsGridVertical(:);
 positions = positions - D/2 - 1i*D/2;
 
-%figure(3)
-%scatter(real(positions),imag(positions),'rs'),hold on;
+% figure(3)
+% scatter(real(positions),imag(positions),'rs'),hold on;
 
 end

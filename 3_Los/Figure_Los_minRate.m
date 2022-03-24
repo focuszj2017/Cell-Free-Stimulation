@@ -9,8 +9,8 @@ clear all
 
 %% Inital parameters
 K = 40; %number of terminals
-M = 100; %number of access points in cell free
-Na = 4; %number of antennas per AP in cell free
+M = 400; %number of access points in cell free
+Na = 1; %number of antennas per AP in cell free
 M_cl = 1;%number of APs in collocated massive MIMO
 Na_cl = 400;%number of antennas per AP in collocated
 
