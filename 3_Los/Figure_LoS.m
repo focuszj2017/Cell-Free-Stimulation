@@ -93,35 +93,15 @@ SE_CL_MMSE_sum = sum(SE_CL_MMSE_tot,1);
 
 %% Plot simulation results
 
-% figure(1);
-% hold on; box on;
-% plot(sort(reshape(SE_CF_MRC_tot,[K*nbrOfSetups,1])), linspace(0,1,K*nbrOfSetups),'r--','LineWidth',2);
-% plot(sort(reshape(SE_CF_MMSE_tot,[K*nbrOfSetups,1])), linspace(0,1,K*nbrOfSetups),'r-','LineWidth',2);
-% plot(sort(reshape(SE_CL_MRC_tot,[K*nbrOfSetups,1])), linspace(0,1,K*nbrOfSetups),'b--','LineWidth',2);
-% plot(sort(reshape(SE_CL_MMSE_tot,[K*nbrOfSetups,1])), linspace(0,1,K*nbrOfSetups),'b-','LineWidth',2);
-% xlabel('Spectral Efficiency [bit/s/Hz]');
-% ylabel('CDF');
-% legend('Cell-Free(MRC)','Cell-Free(MMSE)','Small-Cell(MRC)','Small-Cell(MMSE)');
-% 
-% figure(2)
-% hold on; box on;
-% plot(sort(SE_CF_MRC_sum), linspace(0,1,nbrOfSetups),'r--','LineWidth',2);
-% plot(sort(SE_CF_MMSE_sum), linspace(0,1,nbrOfSetups),'r-','LineWidth',2);
-% plot(sort(SE_CL_MRC_sum), linspace(0,1,nbrOfSetups),'b--','LineWidth',2);
-% plot(sort(SE_CL_MMSE_sum), linspace(0,1,nbrOfSetups),'b-','LineWidth',2);
-% xlabel('Sum of Spectral Efficency[bit/s/Hz]');
-% ylabel('CDF');
-% legend('Cell-Free(MRC)','Cell-Free(MMSE)','Small-Cell(MRC)','Small-Cell(MMSE)');
-
 figure(1);
 hold on; box on;
 plot(sort(reshape(SE_CF_MRC_tot,[K*nbrOfSetups,1])), linspace(0,1,K*nbrOfSetups),'r--','LineWidth',2);
 plot(sort(reshape(SE_CF_MMSE_tot,[K*nbrOfSetups,1])), linspace(0,1,K*nbrOfSetups),'r-','LineWidth',2);
 plot(sort(reshape(SE_CL_MRC_tot,[K*nbrOfSetups,1])), linspace(0,1,K*nbrOfSetups),'b--','LineWidth',2);
 plot(sort(reshape(SE_CL_MMSE_tot,[K*nbrOfSetups,1])), linspace(0,1,K*nbrOfSetups),'b-','LineWidth',2);
-xlabel('Spectral Efficiency [bit/s/Hz]');
-ylabel('CDF');
-legend('Cell-Free(MRC)','Cell-Free(MMSE)','Small-Cell(MRC)','Small-Cell(MMSE)');
+xlabel('频谱效率 [bit/s/Hz]');
+ylabel('累计分布函数');
+legend('分布式MIMO接收机（MRC)','分布式MIMO接收机（MMSE）','集中式MIMO接收机（MRC）','集中式MIMO接收机（MMSE）');
 
 figure(2)
 hold on; box on;
@@ -129,11 +109,7 @@ plot(sort(SE_CF_MRC_sum), linspace(0,1,nbrOfSetups),'r--','LineWidth',2);
 plot(sort(SE_CF_MMSE_sum), linspace(0,1,nbrOfSetups),'r-','LineWidth',2);
 plot(sort(SE_CL_MRC_sum), linspace(0,1,nbrOfSetups),'b--','LineWidth',2);
 plot(sort(SE_CL_MMSE_sum), linspace(0,1,nbrOfSetups),'b-','LineWidth',2);
-xlabel('Sum of Spectral Efficency[bit/s/Hz]');
-ylabel('CDF');
-legend('Cell-Free(MRC)','Cell-Free(MMSE)','Small-Cell(MRC)','Small-Cell(MMSE)');
-
-legend('分布式MIMO接收机（MRC)','分布式MIMO接收机（MMSE）','集中式MIMO接收机（MRC）','集中式MIMO接收机（MMSE）');
-ylabel('累计分布函数');
-xlabel('频谱效率 [bit/s/Hz]');
 xlabel('频谱效率总和 [bit/s/Hz]');
+ylabel('累计分布函数');
+legend('分布式MIMO接收机（MRC)','分布式MIMO接收机（MMSE）','集中式MIMO接收机（MRC）','集中式MIMO接收机（MMSE）');
+

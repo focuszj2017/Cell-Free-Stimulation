@@ -109,3 +109,10 @@ xlabel('频谱效率总和[bit/s/Hz]');
 ylabel('累计分布函数');
 legend('分布式MIMO(MRC)','分布式MIMO(MMSE)','集中式MIMO(MRC)','集中式MIMO(MMSE)');
 
+
+legend('分布式MIMO接收机（MRC)','分布式MIMO接收机（MMSE）','集中式MIMO接收机（MRC）','集中式MIMO接收机（MMSE）');
+ylabel('累计分布函数');
+xlabel('频谱效率 [bit/s/Hz]');
+xlabel('频谱效率总和 [bit/s/Hz]');
+
+legend('分布式MIMO系统','集中式MIMO系统')
